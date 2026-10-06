@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EPUB Reader - Jabir Emeka</title>
+    <meta name="description" content="A desktop EPUB reader built with Python, Flask and EbookLib.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom scrollbar and glow for the cyber aesthetic */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #10b981; }
+        .cyber-glow:hover { box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
+        code { color: #4ade80; }
+        pre code { color: inherit; }
+    </style>
+</head>
+<body class="bg-black text-gray-300 font-mono leading-relaxed tracking-wide selection:bg-green-900 selection:text-green-400">
+
+    <!-- Header -->
+    <header class="bg-[#0a0a0a] border-b border-green-800 py-16 relative overflow-hidden">
+        <div class="absolute inset-0 bg-[linear-gradient(rgba(16,185,129,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(16,185,129,0.05)_1px,transparent_1px)] bg-[size:20px_20px]"></div>
+
+        <div class="max-w-5xl mx-auto px-6 relative z-10">
+            <a href="index.html#projects" class="text-green-500 hover:text-green-300 hover:underline text-sm">[ cd ~/projects ]</a>
+
+            <h1 class="text-2xl md:text-4xl font-bold mt-8 mb-4 text-white break-words">
+                <span class="text-green-500">~/projects/epub-reader</span> $ cat README.md
+            </h1>
+            <h2 class="text-2xl text-green-400 font-bold mb-4">&gt; EPUB Reader</h2>
+            <p class="text-gray-400 max-w-3xl mb-6">A small desktop reader for EPUB files, built with Flask. Point it at a folder of books, pick one from the dashboard, and read it chapter by chapter in a paper-style page next to a table of contents.</p>
+
+            <div class="flex flex-wrap gap-3">
+                <span class="bg-[#111] border border-green-900 text-green-400 px-3 py-1 text-xs">Python 3.13</span>
+                <span class="bg-[#111] border border-green-900 text-green-400 px-3 py-1 text-xs">Flask</span>
+                <span class="bg-[#111] border border-green-900 text-green-400 px-3 py-1 text-xs">EbookLib</span>
+                <span class="bg-[#111] border border-green-900 text-green-400 px-3 py-1 text-xs">flaskwebgui</span>
+                <span class="bg-[#111] border border-green-900 text-green-400 px-3 py-1 text-xs">Jinja2</span>
+                <span class="bg-[#111] border border-green-900 text-green-400 px-3 py-1 text-xs">HTML &amp; CSS</span>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero screenshot -->
+        <section class="py-12 max-w-5xl mx-auto px-6">
+            <figure>
+                <a href="images/epub-reader/dashboard.webp" class="block border border-gray-800 hover:border-green-600 cyber-glow transition-all">
+                    <img src="images/epub-reader/dashboard.webp" width="1440" height="900" class="w-full h-auto block" alt="The EPUB Reader library dashboard: a sidebar listing nine book titles next to a grid of book cover cards.">
+                </a>
+                <figcaption class="text-gray-500 text-xs mt-3">&gt; The library dashboard. Every EPUB in the book folder appears as a cover card, with a jump list in the sidebar.</figcaption>
+            </figure>
+        </section>
+
+        <!-- Overview -->
+        <section class="py-12 bg-[#050505]">
+            <div class="max-w-5xl mx-auto px-6">
+                <h3 class="text-2xl font-bold text-white border-b border-green-800 pb-2 mb-8">
+                    <span class="text-green-500">~/overview</span> $ less about.txt
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+                    <div class="bg-[#0a0a0a] border border-gray-800 p-5">
+                        <h4 class="text-green-400 font-bold mb-2">&gt; Desktop feel, web stack</h4>
+                        <p class="text-gray-400">A local Flask server wrapped in its own window by <a href="https://github.com/ClimenteA/flaskwebgui" class="text-green-500 hover:underline">flaskwebgui</a>. It feels like an app, but it's really a web page served from your own machine.</p>
+                    </div>
+                    <div class="bg-[#0a0a0a] border border-gray-800 p-5">
+                        <h4 class="text-green-400 font-bold mb-2">&gt; Nothing unpacked to disk</h4>
+                        <p class="text-gray-400">Books are opened with <a href="https://github.com/aerkalov/ebooklib" class="text-green-500 hover:underline">EbookLib</a> and every chapter, stylesheet and image is served straight from memory.</p>
+                    </div>
+                    <div class="bg-[#0a0a0a] border border-gray-800 p-5">
+                        <h4 class="text-green-400 font-bold mb-2">&gt; Publisher styling intact</h4>
+                        <p class="text-gray-400">Each file keeps the media type the EPUB declares for it, so books render the way the publisher designed them. The EPUB's own files are never modified.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Walkthrough -->
+        <section class="py-12 max-w-5xl mx-auto px-6">
+            <h3 class="text-2xl font-bold text-white border-b border-green-800 pb-2 mb-8">
+                <span class="text-green-500">~/usage</span> $ ./walkthrough.sh
+            </h3>
+
+            <ol class="space-y-12">
+                <li>
+                    <h4 class="text-xl font-bold text-white mb-2"><span class="text-green-500">[1]</span> Find a book</h4>
+                    <p class="text-gray-400 text-sm mb-4 max-w-3xl">The dashboard shows every book in your library. Click a title in the sidebar to scroll to its card, or scroll through the grid. Titles come from the file names: the <code>.epub</code> extension is dropped, underscores and hyphens become spaces, and each word is capitalized, so <code>black_feminist_thought.epub</code> shows up as "Black Feminist Thought".</p>
+                </li>
+
+                <li>
+                    <h4 class="text-xl font-bold text-white mb-2"><span class="text-green-500">[2]</span> Open it and read</h4>
+                    <p class="text-gray-400 text-sm mb-4 max-w-3xl">Click a cover to open the reader. Choose a chapter in the sidebar and only the page on the right changes, so you keep your place in the table of contents. The current chapter is highlighted.</p>
+                    <figure>
+                        <a href="images/epub-reader/reader-chapter.webp" class="block border border-gray-800 hover:border-green-600 cyber-glow transition-all">
+                            <img src="images/epub-reader/reader-chapter.webp" width="1440" height="900" loading="lazy" class="w-full h-auto block" alt="The reader view for Frankenstein: a table of contents on the left with Letter 1 highlighted, and the chapter text on a paper-colored page on the right.">
+                        </a>
+                        <figcaption class="text-gray-500 text-xs mt-3">&gt; Reading <em>Frankenstein</em>. The table of contents stays put while chapters load into the paper page.</figcaption>
+                    </figure>
+                </li>
+
+                <li>
+                    <h4 class="text-xl font-bold text-white mb-2"><span class="text-green-500">[3]</span> Illustrations come along</h4>
+                    <p class="text-gray-400 text-sm mb-4 max-w-3xl">Images inside the book load from the EPUB itself and are kept inside the page, so illustrated editions read the way they were printed.</p>
+                    <figure>
+                        <a href="images/epub-reader/reader-illustrated.webp" class="block border border-gray-800 hover:border-green-600 cyber-glow transition-all">
+                            <img src="images/epub-reader/reader-illustrated.webp" width="1440" height="900" loading="lazy" class="w-full h-auto block" alt="The reader showing a full-page pen-and-ink illustration of a man in a top hat riding a black horse, from an illustrated edition of Pride and Prejudice.">
+                        </a>
+                        <figcaption class="text-gray-500 text-xs mt-3">&gt; Hugh Thomson's illustrations in <em>Pride and Prejudice</em>, served straight out of the EPUB.</figcaption>
+                    </figure>
+                </li>
+
+                <li>
+                    <h4 class="text-xl font-bold text-white mb-2"><span class="text-green-500">[4]</span> Go back</h4>
+                    <p class="text-gray-400 text-sm max-w-3xl">Click the heading at the top of the sidebar to return to the dashboard.</p>
+                </li>
+            </ol>
+        </section>
+
+        <!-- How it works -->
+        <section class="py-12 bg-[#050505]">
+            <div class="max-w-5xl mx-auto px-6">
+                <h3 class="text-2xl font-bold text-white border-b border-green-800 pb-2 mb-8">
+                    <span class="text-green-500">~/internals</span> $ cat how_it_works.md
+                </h3>
+
+                <p class="text-gray-400 text-sm mb-8 max-w-3xl">An EPUB is basically a zip file full of web pages: XHTML chapters, CSS, images and a manifest that lists them all. Rather than unpacking books to disk, the app opens each one in memory and answers the browser's requests from it.</p>
+
+                <!-- Request flow -->
+                <div class="bg-[#0a0a0a] border border-gray-800 p-5 mb-10 overflow-x-auto">
+                    <p class="text-green-400 font-bold text-sm mb-4">&gt; request flow</p>
+                    <div class="flex flex-col md:flex-row md:items-stretch gap-3 text-xs min-w-0">
+                        <div class="flex-1 border border-green-900 p-3">
+                            <p class="text-white font-bold">Desktop window</p>
+                            <p class="text-gray-500 mt-1">flaskwebgui opens Chrome/Edge in app mode</p>
+                        </div>
+                        <div class="text-green-500 self-center rotate-90 md:rotate-0">--&gt;</div>
+                        <div class="flex-1 border border-green-900 p-3">
+                            <p class="text-white font-bold">Flask routes</p>
+                            <p class="text-gray-500 mt-1">dashboard, covers, reader, book files</p>
+                        </div>
+                        <div class="text-green-500 self-center rotate-90 md:rotate-0">--&gt;</div>
+                        <div class="flex-1 border border-green-900 p-3">
+                            <p class="text-white font-bold">EbookLib</p>
+                            <p class="text-gray-500 mt-1">parses the .epub and looks up items by href</p>
+                        </div>
+                        <div class="text-green-500 self-center rotate-90 md:rotate-0">--&gt;</div>
+                        <div class="flex-1 border border-green-900 p-3">
+                            <p class="text-white font-bold">BOOK_REPO</p>
+                            <p class="text-gray-500 mt-1">a folder of .epub files on disk</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Routes -->
+                <h4 class="text-lg font-bold text-green-400 mb-3">&gt; Routes</h4>
+                <div class="overflow-x-auto mb-10 border border-gray-800">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-[#0a0a0a] text-white">
+                            <tr>
+                                <th class="px-4 py-3 border-b border-green-900 whitespace-nowrap">Route</th>
+                                <th class="px-4 py-3 border-b border-green-900">What it does</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-gray-400">
+                            <tr class="border-b border-gray-800">
+                                <td class="px-4 py-3 align-top whitespace-nowrap"><code>/</code></td>
+                                <td class="px-4 py-3">Lists every file in <code>BOOK_REPO</code> and renders the dashboard.</td>
+                            </tr>
+                            <tr class="border-b border-gray-800">
+                                <td class="px-4 py-3 align-top whitespace-nowrap"><code>/book/cover/&lt;ebook&gt;</code></td>
+                                <td class="px-4 py-3">Returns the book's cover image. It checks the EPUB's cover item first, then falls back to the <code>&lt;meta name="cover"&gt;</code> entry in the OPF metadata, and returns 404 if neither exists.</td>
+                            </tr>
+                            <tr class="border-b border-gray-800">
+                                <td class="px-4 py-3 align-top whitespace-nowrap"><code>/book/view/&lt;ebook&gt;</code></td>
+                                <td class="px-4 py-3">Loads the book, walks its table of contents and renders the reader.</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 align-top whitespace-nowrap"><code>/book/&lt;href&gt;</code></td>
+                                <td class="px-4 py-3">Serves a single file from inside the open book (a chapter, a stylesheet, an image) with its original media type.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Relative paths -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                    <div>
+                        <h4 class="text-lg font-bold text-green-400 mb-3">&gt; Why chapters display correctly</h4>
+                        <p class="text-gray-400 text-sm mb-3">Chapters link to their own assets with relative paths such as <code>Styles/style.css</code> or <code>Images/fig1.jpg</code>. Every chapter is served from under <code>/book/</code>, so the browser resolves those paths against <code>/book/</code> too.</p>
+                        <p class="text-gray-400 text-sm">Those requests come back to one route, which finds the matching item in the EPUB and returns it with the media type the book declares. No rewriting of the publisher's HTML is needed.</p>
+                    </div>
+                    <pre class="bg-[#0a0a0a] border border-gray-800 p-4 text-xs text-gray-300 overflow-x-auto self-start"><code><span class="text-gray-500"># app.py</span>
+<span class="text-green-400">@app.route</span>(<span class="text-yellow-300">"/book/&lt;path:href&gt;"</span>)
+<span class="text-green-400">def</span> book_file(href):
+    item = book.get_item_with_href(href)
+    <span class="text-green-400">if</span> item <span class="text-green-400">is</span> None:
+        abort(404)
+    <span class="text-green-400">return</span> Response(item.get_content(),
+                    mimetype=item.media_type)</code></pre>
+                </div>
+
+                <!-- TOC -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                    <div>
+                        <h4 class="text-lg font-bold text-green-400 mb-3">&gt; Table of contents</h4>
+                        <p class="text-gray-400 text-sm">An EPUB's table of contents can be nested to any depth. <code>title_search</code> walks <code>book.toc</code> recursively and flattens it into a list of <code>(href, title, kind)</code> tuples. Sections are marked <code>1</code> and regular links <code>0</code>, and the reader indents links under their sections.</p>
+                    </div>
+                    <pre class="bg-[#0a0a0a] border border-gray-800 p-4 text-xs text-gray-300 overflow-x-auto self-start"><code><span class="text-green-400">def</span> title_search(toc, titleLst):
+    <span class="text-green-400">for</span> item <span class="text-green-400">in</span> toc:
+        <span class="text-green-400">if</span> isinstance(item, Iterable):
+            title_search(item, titleLst)
+        <span class="text-green-400">elif</span> isinstance(item, epub.Section):
+            titleLst.append((item.href, item.title, 1))
+        <span class="text-green-400">else</span>:
+            titleLst.append((item.href, item.title, 0))
+    <span class="text-green-400">return</span> titleLst</code></pre>
+                </div>
+
+                <!-- Reader page -->
+                <div class="mb-10">
+                    <h4 class="text-lg font-bold text-green-400 mb-3">&gt; The reader page</h4>
+                    <p class="text-gray-400 text-sm mb-3 max-w-3xl">The reader has two parts: a sidebar with the table of contents, and an <code>&lt;iframe name="page"&gt;</code> that shows the current chapter. Each sidebar link has <code>target="page"</code>, so clicking one loads that chapter into the frame without reloading the rest of the page.</p>
+                    <p class="text-gray-400 text-sm max-w-3xl">When a chapter finishes loading, a short script adds a reader stylesheet to it. That stylesheet caps the line length, adds margins, keeps images inside the frame and centers image-only pages such as the cover, all without touching the EPUB's own files.</p>
+                </div>
+
+                <!-- Dashboard -->
+                <div class="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-8 items-start">
+                    <div>
+                        <h4 class="text-lg font-bold text-green-400 mb-3">&gt; The dashboard</h4>
+                        <p class="text-gray-400 text-sm mb-3">Every book is a cover card in a responsive grid. Cards in a row share the same height and width, and titles always get two lines of space so the labels below them line up.</p>
+                        <p class="text-gray-400 text-sm">Cards never get narrower than 180px on desktop (140px on phones). Under 700px wide, the sidebar moves above the grid.</p>
+                    </div>
+                    <figure class="w-48 md:w-56 mx-auto">
+                        <a href="images/epub-reader/dashboard-mobile.webp" class="block border border-gray-800 hover:border-green-600 cyber-glow transition-all">
+                            <img src="images/epub-reader/dashboard-mobile.webp" width="780" height="1688" loading="lazy" class="w-full h-auto block" alt="The dashboard on a phone-sized screen, with the book list stacked above a two-column grid of covers.">
+                        </a>
+                        <figcaption class="text-gray-500 text-xs mt-3">&gt; The same dashboard at phone width.</figcaption>
+                    </figure>
+                </div>
+            </div>
+        </section>
+
+        <!-- Getting started -->
+        <section class="py-12 max-w-5xl mx-auto px-6">
+            <h3 class="text-2xl font-bold text-white border-b border-green-800 pb-2 mb-8">
+                <span class="text-green-500">~/setup</span> $ ./install.sh
+            </h3>
+            <p class="text-gray-400 text-sm mb-4">Requires Python 3.13 and Chrome or Edge (flaskwebgui uses one of them to open the app window).</p>
+            <pre class="bg-[#0a0a0a] border border-gray-800 p-4 text-xs text-gray-300 overflow-x-auto"><code><span class="text-gray-500"># install</span>
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install Flask EbookLib flaskwebgui
+
+<span class="text-gray-500"># tell it where your books are</span>
+$env:BOOK_REPO = "C:\path\to\your\books"
+
+<span class="text-gray-500"># run as a desktop app (port 42057)</span>
+cd flaskr
+python app.py
+
+<span class="text-gray-500"># or in a browser tab while editing templates</span>
+flask --app app run --debug</code></pre>
+        </section>
+
+        <!-- Roadmap -->
+        <section class="py-12 bg-[#050505]">
+            <div class="max-w-5xl mx-auto px-6">
+                <h3 class="text-2xl font-bold text-white border-b border-green-800 pb-2 mb-8">
+                    <span class="text-green-500">~/roadmap</span> $ cat TODO
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                    <div class="bg-[#0a0a0a] border border-gray-800 p-5">
+                        <h4 class="text-green-400 font-bold mb-3">&gt; Known limitations</h4>
+                        <ul class="list-disc list-inside text-gray-400 space-y-2 marker:text-green-500">
+                            <li>The open book lives in a module-level global, so only one book can be open at a time.</li>
+                            <li>Every cover request re-parses the whole EPUB, which slows down large libraries.</li>
+                            <li>The dashboard lists every file in the folder, not just <code>.epub</code> files.</li>
+                            <li>Books added while the app is open need a page refresh to appear.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-[#0a0a0a] border border-gray-800 p-5">
+                        <h4 class="text-green-400 font-bold mb-3">&gt; Next up</h4>
+                        <ul class="text-gray-400 space-y-2">
+                            <li><span class="text-green-500">[ ]</span> Replace the global book and cache parsed books and covers</li>
+                            <li><span class="text-green-500">[ ]</span> Only list <code>.epub</code> files and skip ones that fail to open</li>
+                            <li><span class="text-green-500">[ ]</span> Remember the last chapter read in each book</li>
+                            <li><span class="text-green-500">[ ]</span> Notes and annotations</li>
+                            <li><span class="text-green-500">[ ]</span> Remember the book folder between sessions</li>
+                            <li><span class="text-green-500">[ ]</span> Pick up new books without a manual refresh</li>
+                        </ul>
+                    </div>
+                </div>
+                <p class="text-gray-600 text-xs mt-8">Screenshots show a demo library of public-domain books from Project Gutenberg.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black border-t border-green-900 py-6 text-center text-sm">
+        <p class="text-gray-500"><a href="index.html" class="text-green-500 hover:text-green-300 hover:underline">[ cd ~ ]</a> <span class="text-green-600 animate-pulse">_</span> | Contact: Jemeka10@gmail.com</p>
+    </footer>
+
+</body>
+</html>
